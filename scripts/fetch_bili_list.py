@@ -70,8 +70,18 @@ def main():
         print(f'page {pn} ...')
         d = fetch(url, {'User-Agent': UA})
         if d.get('code') != 0:
-            print(f'page {pn} code={d.get("code")} msg={d.get("message")} — stop')
-            break
+            code = d.get('code')
+            print(f'page {pn} code={code} msg={d.get("message")} — stop')
+            # 风控类错误等待冷却后重试同页，最多 3 次
+            if code in (-352, -412, -799) and pn <= 2:
+                for attempt in range(3):
+                    print(f'  冷却 {60*(attempt+1)}s 后重试第 {pn} 页...')
+                    time.sleep(60 * (attempt + 1))
+                    d = fetch(url, {'User-Agent': UA})
+                    if d.get('code') == 0:
+                        break
+            if d.get('code') != 0:
+                break
         data = d.get('data') or {}
         if total is None:
             total = data.get('page', {}).get('count')
@@ -94,6 +104,9 @@ def main():
         pn += 1
         time.sleep(12)  # 每页间隔，防限流
 
+    if not all_videos:
+        print('!! 未拉到任何视频，保留现有清单不动（防止风控失败覆盖数据）')
+        return
     with open(OUT, 'w', encoding='utf-8') as f:
         json.dump(all_videos, f, ensure_ascii=False, indent=1)
     print(f'\n完成: {len(all_videos)} 条 → {OUT}')
