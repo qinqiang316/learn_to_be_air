@@ -30,15 +30,15 @@ description: 用户说"学习某博主的文字风格/文风"时使用。搜索�
   - 本地音频/视频：直接上传转写
 
 ### Step 1.5 NotebookLM 借用（notebooklm-brief 项目）
-项目路径 `E:\AI project\06-工具项目\notebooklm-brief`，**必须用 venv python**：
+项目路径 `/Users/qqiang/AI project/06-工具项目/notebooklm-brief`，**必须用 venv python**：
 ```bash
-VPY="/c/Users/lenovo/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe"
+VPY="/Users/qqiang/.hermes/hermes-agent/venv/bin/python"
 "$VPY" main.py "<链接>" --ask "请提取这篇/这个视频的完整文字内容"   # 语料转写
 "$VPY" main.py "<链接>" --no-learn --no-archive                    # 只要分析，跳过学习产物和归档
 ```
 - 输出在 `output/笔记-<标题>/`，其中 `<标题>.笔记.md` 含原文/转写全文
 - 分析思路借用：NotebookLM 来源约束（只依据材料回答、带引用锚点），适合让模型自证风格结论；`--ask "这个作者的写作风格特征是什么，引用原文佐证"` 可出带锚点的风格初稿
-- 需代理访问 Google（v2rayN 127.0.0.1:10808）；登录态 `~/.notebooklm/profiles/default/storage_state.json`（自动刷新）
+- 需代理访问 Google（macOS 走 Shadowrocket 隧道，proxy 留空直连）；登录态 `~/.notebooklm/profiles/default/storage_state.json`（自动刷新）
 - 详细命令/坑见 skill `notebooklm-brief`
 
 ### Step 2 风格拆解（对每篇原文过 24 小项）
@@ -55,7 +55,7 @@ VPY="/c/Users/lenovo/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe"
 
 ### Step 5 交付
 - 输出：风格档案 + 学习计划（md）
-- 存档到 `E:\AI project\05-日常工具\下载文件\<博主>风格学习\`，含原文 txt 语料
+- 存档到 `/Users/qqiang/AI project/05-日常工具/下载文件/<博主>风格学习/`，含原文 txt 语料
 - 首次分析某博主时，把风格档案存为 `references/author-profiles/<博主>.md`，下次直接复用
 
 ## 方法来源（2026-08 调研）

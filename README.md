@@ -11,6 +11,10 @@
 ```
 be_air/
 ├── SKILL.md                        # writing-style-coach 主流程
+├── notebooklm-output/              # NotebookLM 分析/转写过程文件（与 notebooklm-brief 的 output/ 独立）
+│   ├── 笔记-半佛-*                  #   半佛内容分析（5本好书/奶茶加盟/营养工厂/活着就是熬着）
+│   ├── 笔记-三五环No117 等          #   播客转写（三五环/姜就一下/新榜编辑部/知行小酒馆E165/E195）
+│   └── ...（每个笔记本：归档笔记.md + source/ + generated/ + knowledge/）
 ├── references/
 │   ├── style-dimensions.md         # 24 小项风格拆解模板（含量化附录+三重验证）
 │   ├── learning-plan-template.md   # 四阶段学习计划模板
@@ -33,7 +37,7 @@ be_air/
 
 ```bash
 # 安装 skill 到 Hermes
-cp -r SKILL.md references ~/AppData/Local/hermes/skills/productivity/writing-style-coach/
+cp -r SKILL.md references ~/.hermes/skills/productivity/writing-style-coach/
 
 # 触发
 # 对 Hermes 说："学习 XX 博主的文字风格"
