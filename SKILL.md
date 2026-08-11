@@ -1,13 +1,19 @@
 ---
 name: writing-style-coach
-description: 用户说"学习某博主的文字风格/文风"时使用。搜索博主素材→总结风格→对照用户写作基线→输出学习计划。
+description: 用户说"学习某博主的文字风格/文风"时使用。搜索博主素材→总结风格→对照用户写作基线→输出学习计划。支持任意博主（首次建档/增量更新）。
 ---
 
-# 博主文字风格学习
+# 博主文字风格学习（通用版：支持任意博主）
 
 ## 触发条件
-- 用户说"学习 XX 的风格 / 文风 / 写法"
+- 用户说"学习 XX 的风格 / 文风 / 写法"（XX 为任意博主，不限于半佛）
 - 用户想模仿某位博主、作者、UP主的写作方式
+
+## 首次 vs 增量（关键前置判断）
+先查本项目的 `references/author-profiles/_index.md` 注册表：
+- **该博主已建档**（`references/author-profiles/<博主>.md` 存在）→ **增量模式**：读现有档案 → 只搜新增内容 → 更新档案对应小节（用 `blogger-research` skill 的"增量更新模式"）
+- **未建档** → **首次模式**：搜索博主全平台内容建档（用 `blogger-research` skill 的"首次建档模式"）
+- 建档完成后档案存 `references/author-profiles/<博主>.md`，下次直接复用
 
 ## 核心原则
 1. **风格结论必须来自本人原文**，不能只抄二手分析。二手拆解只作参考，需用原文验证。
@@ -18,16 +24,19 @@ description: 用户说"学习某博主的文字风格/文风"时使用。搜索�
 ## 标准流程
 
 ### Step 1 素材收集（30 分钟内）
-- web_search 博主名 + 平台（公众号/B站/知乎/专栏），找到：
+- **已建档博主**：读 `corpus/INDEX.md` 对应博主分区，确定已有语料和缺口 → 只补缺口方向（增量）
+- **未建档博主**：按 `blogger-research` skill 的"首次建档模式"搜索博主全平台（公众号/B站/知乎/微博/头条/播客），确认媒体版图后采集
+- 通用采集要求：
   - 2-3 篇**可抓全文**的本人文章（转载站优先：woshipm 等常授权转载）
   - 1-2 篇文风拆解/访谈（参考用）
-- 下载 HTML：`curl -s -L -A "Mozilla/5.0..." URL -o file.html`
-- 提取正文：python 去 script/style/标签 → 存 txt
-- 抓不到全文的（公众号原文常被墙），用搜索结果里的长引用片段补充
+  - 下载 HTML：`curl -s -L -A "Mozilla/5.0..." URL -o file.html`
+  - 提取正文：python 去 script/style/标签 → 存 txt
+  - 抓不到全文的（公众号原文常被墙），用搜索结果里的长引用片段补充
 - **视频/音频语料 → 借用 notebooklm-brief 通道**（见下方"NotebookLM 借用"）：
   - B站视频：借用 `src/source.py` 的 `youtube_match`（B站→YouTube 原片匹配：标题相似+时长接近双条件）→ 命中则传 YouTube 链接让 NotebookLM **服务端自动转写**（省本地转写）；未命中回退 `bilibili_to_audio` 下载音频上传
   - YouTube 视频：直接传链接，NotebookLM 服务端转写
   - 本地音频/视频：直接上传转写
+- **落盘**：新博主语料放 `corpus/<博主>/<方向>/`（半佛历史平铺不动）；NotebookLM 过程文件放 `notebooklm-output/`
 
 ### Step 1.5 NotebookLM 借用（notebooklm-brief 项目）
 项目路径 `/Users/qqiang/AI project/06-工具项目/notebooklm-brief`，**必须用 venv python**：
@@ -56,7 +65,8 @@ VPY="/Users/qqiang/.hermes/hermes-agent/venv/bin/python"
 ### Step 5 交付
 - 输出：风格档案 + 学习计划（md）
 - 存档到 `/Users/qqiang/AI project/05-日常工具/下载文件/<博主>风格学习/`，含原文 txt 语料
-- 首次分析某博主时，把风格档案存为 `references/author-profiles/<博主>.md`，下次直接复用
+- 风格档案统一存 `references/author-profiles/<博主>.md`（已建档则更新，未建档则新建）；语料统一入 `corpus/<博主>/`（新博主）或对应半佛平铺区（历史）
+- 建档后更新 `references/author-profiles/_index.md` 博主注册表
 
 ## 方法来源（2026-08 调研）
 - 花叔女娲.skill (`alchaincyf/nuwa-skill`)：表达DNA量化（句式指纹6指标+风格标签7轴）、三重验证、诚实边界
@@ -73,7 +83,10 @@ VPY="/Users/qqiang/.hermes/hermes-agent/venv/bin/python"
 ## 支持文件
 - `references/style-dimensions.md` — 24小项分析模板（含量化附录+三重验证）
 - `references/learning-plan-template.md` — 学习计划模板
-- `references/author-profiles/banfo.md` — 半佛仙人风格档案（示例）
+- `references/author-profiles/_index.md` — 博主注册表（哪些博主已建档）
+- `references/author-profiles/banfo.md` — 半佛仙人风格档案（示例，v4 全介质版）
 
 ## 关联 skill
+- `blogger-research` — 博主全平台调研（首次建档 / 增量更新，任意博主通用）
+- `banfo-research` — 半佛专用调研（历史版本，新博主用 blogger-research）
 - `notebooklm-brief` — 视频/音频转写、原文提取、来源约束分析（本项目借用的通道）
